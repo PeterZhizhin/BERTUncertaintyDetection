@@ -1,4 +1,7 @@
 #!/bin/bash
+# The python script is in this directory as well, so make it cwd.
+cd "$(dirname "$0")"
+
 export MAX_LENGTH=512
 export BERT_MODEL=bert-base-cased
 
