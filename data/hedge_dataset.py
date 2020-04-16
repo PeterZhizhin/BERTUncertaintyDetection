@@ -6,12 +6,20 @@ import tqdm
 
 from utils import nlp_module
 
+UNCERTAINTY_TO_CLASS = {
+    'speculation_hypo_condition _': 'COND',
+    'speculation_hypo_doxastic _': 'DOX',
+    'speculation_hypo_investigation _': 'INV',
+    'speculation_modal_possible_': 'EPIST',
+    'speculation_modal_probable_': 'EPIST',
+}
+
 
 def _match_uncertainty_tokens(doc, uncertain_spans, uncertainty_types):
     current_uncertain_span_i = 0
     for token in doc:
         token_idx = token.idx
-        # Ensure that current token index is in span range
+        # Ensure that current span is at current token first symbol index or after it.
         while current_uncertain_span_i < len(uncertain_spans) and (
                 token_idx >= uncertain_spans[current_uncertain_span_i][1]):
             current_uncertain_span_i += 1
@@ -23,6 +31,15 @@ def _match_uncertainty_tokens(doc, uncertain_spans, uncertainty_types):
         if span_start <= token_idx < span_end:
             token._.is_uncertain = True
             token._.uncertainty_type = uncertainty_types[current_uncertain_span_i]
+            token._.uncertainty_span_idx = current_uncertain_span_i
+
+
+def _get_token_class(is_uncertain, current_uncertainty_span_idx, prev_uncertainty_span_idx, uncertainty_type):
+    if not is_uncertain:
+        return 'O'
+    class_string = 'I' if current_uncertainty_span_idx == prev_uncertainty_span_idx else 'B'
+    uncertainty_class = UNCERTAINTY_TO_CLASS[uncertainty_type]
+    return class_string + '-' + uncertainty_class
 
 
 class HedgeDataset(object):
@@ -51,6 +68,36 @@ class HedgeDataset(object):
                     uncertainty_type = token._.uncertainty_type
                     row = (document_id, document_type, sentence_i, token_i, token_text, is_untertain, uncertainty_type)
                     csv_file.writerow(row)
+
+    def convert_to_ner_txt(self, out_file_obj, documents_iterator=None, use_tqdm=True):
+        if documents_iterator is None:
+            documents_iterator = list(self.root.iterdescendants('Document'))
+        if use_tqdm:
+            documents_iterator = tqdm.tqdm(documents_iterator, desc='Converting documents')
+        for document in documents_iterator:
+            all_sentences_iter = document.iterdescendants('Sentence')
+            for sentence_i, sentence in enumerate(all_sentences_iter):
+                parsed_sentence = self.sentence_to_tagged_tokens(sentence)
+                prev_uncertainty_span_idx = None
+                for token in parsed_sentence:
+                    token_text = token.text
+                    is_uncertain = token._.is_uncertain
+                    current_uncertainty_span_idx = token._.uncertainty_span_idx
+                    uncertainty_type = token._.uncertainty_type
+                    uncertainty_class = _get_token_class(is_uncertain, current_uncertainty_span_idx,
+                                                         prev_uncertainty_span_idx, uncertainty_type)
+
+                    print(token_text, uncertainty_class, file=out_file_obj)
+                    prev_uncertainty_span_idx = current_uncertainty_span_idx
+
+                # Sentence end, print empty line
+                print(file=out_file_obj)
+
+    def convert_to_multiple_ner_files(self, out_file_pattern):
+        documents_iterator = list(self.root.iterdescendants('Document'))
+        for i, document in enumerate(tqdm.tqdm(documents_iterator, desc='Converting documents'), 1):
+            with open(out_file_pattern.format(i), 'w') as out_file_i:
+                self.convert_to_ner_txt(out_file_i, documents_iterator=[document], use_tqdm=False)
 
     @classmethod
     def from_xml_file(cls, source):
