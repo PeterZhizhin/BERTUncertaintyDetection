@@ -96,7 +96,7 @@ class HedgeDataset(object):
     def convert_to_multiple_ner_files(self, out_file_pattern):
         documents_iterator = list(self.root.iterdescendants('Document'))
         for i, document in enumerate(tqdm.tqdm(documents_iterator, desc='Converting documents'), 1):
-            with open(out_file_pattern.format(i), 'w') as out_file_i:
+            with open(out_file_pattern.format(i), 'w', encoding='utf-8') as out_file_i:
                 self.convert_to_ner_txt(out_file_i, documents_iterator=[document], use_tqdm=False)
 
     @classmethod
