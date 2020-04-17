@@ -3,9 +3,9 @@
 cd "$(dirname "$0")"
 
 export MAX_LENGTH=512
-export BERT_MODEL=bert-base-cased
+export BERT_MODEL=allenai/scibert_scivocab_cased
 
-export OUTPUT_DIR=bert_base_cased_wiki_hedge_50percent
+export OUTPUT_DIR=scibert_scivocab_cased_wiki_hedge_50percent
 export BATCH_SIZE=32
 export NUM_EPOCHS=3
 export SAVE_STEPS=750
@@ -21,6 +21,7 @@ python3 run_ner.py --data_dir ../uncertainty_dataset/output_datasets/result \
     --per_gpu_train_batch_size $BATCH_SIZE \
     --save_steps $SAVE_STEPS \
     --seed $SEED \
+    --cache_dir transformers_cache \
     --do_train \
     --do_eval
 
