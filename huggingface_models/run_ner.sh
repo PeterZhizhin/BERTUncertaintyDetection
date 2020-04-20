@@ -9,6 +9,7 @@ export OUTPUT_DIR=scibert_scivocab_cased_wiki_hedge_50percent
 export BATCH_SIZE=32
 export NUM_EPOCHS=3
 export SAVE_STEPS=750
+export EVAL_STEPS=100
 export SEED=1
 
 python3 run_ner.py --data_dir ../uncertainty_dataset/output_datasets/result \
@@ -19,6 +20,7 @@ python3 run_ner.py --data_dir ../uncertainty_dataset/output_datasets/result \
     --max_seq_length  $MAX_LENGTH \
     --num_train_epochs $NUM_EPOCHS \
     --per_gpu_train_batch_size $BATCH_SIZE \
+    --eval_steps $EVAL_STEPS \
     --save_steps $SAVE_STEPS \
     --seed $SEED \
     --cache_dir transformers_cache \

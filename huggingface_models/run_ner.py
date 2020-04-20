@@ -15,7 +15,6 @@
 # limitations under the License.
 """ Fine-tuning the library models for named entity recognition on CoNLL-2003 (Bert or Roberta). """
 
-
 import argparse
 import glob
 import logging
@@ -41,12 +40,10 @@ from transformers import (
 )
 from utils_ner import convert_examples_to_features, get_labels, read_examples_from_file
 
-
 try:
     from torch.utils.tensorboard import SummaryWriter
 except ImportError:
     from tensorboardX import SummaryWriter
-
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +94,7 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
 
     # Check if saved optimizer or scheduler states exist
     if os.path.isfile(os.path.join(args.model_name_or_path, "optimizer.pt")) and os.path.isfile(
-        os.path.join(args.model_name_or_path, "scheduler.pt")
+            os.path.join(args.model_name_or_path, "scheduler.pt")
     ):
         # Load in optimizer and scheduler states
         optimizer.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "optimizer.pt")))
@@ -204,7 +201,7 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
                 if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                     # Log metrics
                     if (
-                        args.local_rank == -1 and args.evaluate_during_training
+                            args.local_rank == -1 and args.evaluate_during_training
                     ):  # Only evaluate when single GPU otherwise metrics may not average well
                         results, _ = evaluate(args, model, tokenizer, labels, pad_token_label_id, mode="dev")
                         for key, value in results.items():
@@ -230,6 +227,19 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
                     torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
                     torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
                     logger.info("Saving optimizer and scheduler states to %s", output_dir)
+
+                if args.local_rank in [-1, 0] and args.eval_steps > 0 and global_step % args.eval_steps == 0:
+                    result, _ = evaluate(args, model, tokenizer, labels, pad_token_label_id, mode="dev",
+                                         prefix=str(global_step))
+                    eval_loss = result['loss']
+                    eval_f1_score = result['f1']
+                    eval_precision = result['precision']
+                    eval_recall = result['recall']
+
+                    tb_writer.add_scalar('eval_loss', eval_loss, global_step)
+                    tb_writer.add_scalar('eval_f1', eval_f1_score, global_step)
+                    tb_writer.add_scalar('eval_precision', eval_precision, global_step)
+                    tb_writer.add_scalar('eval_recall', eval_recall, global_step)
 
             if args.max_steps > 0 and global_step > args.max_steps:
                 epoch_iterator.close()
@@ -429,7 +439,7 @@ def main():
         default=128,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
-        "than this will be truncated, sequences shorter will be padded.",
+             "than this will be truncated, sequences shorter will be padded.",
     )
     parser.add_argument("--do_train", action="store_true", help="Whether to run training.")
     parser.add_argument("--do_eval", action="store_true", help="Whether to run eval on the dev set.")
@@ -475,6 +485,7 @@ def main():
     parser.add_argument("--warmup_steps", default=0, type=int, help="Linear warmup over warmup_steps.")
 
     parser.add_argument("--logging_steps", type=int, default=500, help="Log every X updates steps.")
+    parser.add_argument("--eval_steps", type=int, default=0, help="Log evaluation results every X updates steps.")
     parser.add_argument("--save_steps", type=int, default=500, help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--eval_all_checkpoints",
@@ -500,7 +511,7 @@ def main():
         type=str,
         default="O1",
         help="For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."
-        "See details at https://nvidia.github.io/apex/amp.html",
+             "See details at https://nvidia.github.io/apex/amp.html",
     )
     parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank")
     parser.add_argument("--server_ip", type=str, default="", help="For distant debugging.")
@@ -508,10 +519,10 @@ def main():
     args = parser.parse_args()
 
     if (
-        os.path.exists(args.output_dir)
-        and os.listdir(args.output_dir)
-        and args.do_train
-        and not args.overwrite_output_dir
+            os.path.exists(args.output_dir)
+            and os.listdir(args.output_dir)
+            and args.do_train
+            and not args.overwrite_output_dir
     ):
         raise ValueError(
             "Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(
