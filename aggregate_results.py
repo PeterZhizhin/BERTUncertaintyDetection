@@ -11,7 +11,7 @@ def parse_eval_results_file(path):
     with open(path, 'r') as f:
         all_lines = f.readlines()
         metric_value = [line.strip().split(' = ') for line in all_lines]
-        return {metric: value for metric, value in metric_value}
+        return {metric: float(value) for metric, value in metric_value}
 
 
 def main():
