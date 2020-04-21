@@ -3,7 +3,7 @@ import re
 import os
 import collections
 
-FOLDER_RE = re.compile(r'([a-z_]+)_(wiki|bio|wiki_to_bio|bio_to_wiki)_(\d+)$')
+FOLDER_RE = re.compile(r'([a-z_]+?)_(wiki|bio|wiki_to_bio|bio_to_wiki)_(\d+)$')
 
 
 def parse_eval_results_file(path):
