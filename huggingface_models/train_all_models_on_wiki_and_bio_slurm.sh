@@ -31,4 +31,5 @@ do
 done
 
 current_task_arguments=${all_arguments_list[${SLURM_ARRAY_TASK_ID}]}
+echo "Current task ID: $SLURM_ARRAY_TASK_ID"
 echo "Executing arguments: $current_task_arguments"
