@@ -24,6 +24,7 @@ mkdir -p classification_results
 export BATCH_SIZE=32
 export NUM_EPOCHS=5
 export SAVE_STEPS=750
+export MAX_LENGTH=512
 
 python3 run_classification.py --data_dir $DATA_DIR \
     --task_name hedge \
