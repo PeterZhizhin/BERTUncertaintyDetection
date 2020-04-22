@@ -4,7 +4,7 @@
 #SBATCH --output=ner_experiments.%A_%a.out
 #SBATCH --array=0-119%10
 
-BASE_DATA_DIR=../uncertainty_dataset/output_datasets/result
+BASE_DATA_DIR=../uncertainty_dataset/output_datasets/result/classification
 BASE_OUTPUT_DIR="classification_experiment"
 
 mkdir -p $BASE_OUTPUT_DIR
