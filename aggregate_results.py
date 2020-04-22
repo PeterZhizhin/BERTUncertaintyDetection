@@ -17,11 +17,11 @@ def parse_eval_results_file(path):
 
 def export_all_metrics_csv(metric_model_dataset_all_values, output_file_path):
     with open(output_file_path, 'w') as output_f:
-        with csv.writer(output_f) as output_csv:
-            output_csv.writerow(['model', 'dataset', 'metric', 'run_id', 'value'])
-            for (model_name, dataset, metric), all_values in metric_model_dataset_all_values.items():
-                for seed, value in all_values:
-                    output_csv.writerow([model_name, dataset, metric, seed, value])
+        output_csv = csv.writer(output_f)
+        output_csv.writerow(['model', 'dataset', 'metric', 'run_id', 'value'])
+        for (model_name, dataset, metric), all_values in metric_model_dataset_all_values.items():
+            for seed, value in all_values:
+                output_csv.writerow([model_name, dataset, metric, seed, value])
 
 
 def main():
