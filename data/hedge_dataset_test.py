@@ -175,6 +175,37 @@ class MyTestCase(unittest.TestCase):
         ).rstrip()
         self.assertEqual(result_txt, expected_txt)
 
+    def test_convert_to_sequence_classification_returns_tsv_with_sentences_and_labels(self):
+        element = etree.fromstring(
+            '''<Annotation>
+                <DocumentSet>
+                    <Document>
+                        <DocID type="test_doc">test_doc_id1</DocID>
+                        <Sentence>Uncertain sentence <ccue type="speculation_hypo_condition _">m1 m2</ccue> B C</Sentence>
+                    </Document>
+                    <Document>
+                        <DocID type="test_doc">test_doc_id2</DocID>
+                        <Sentence>Certain sentence A B C</Sentence>
+                        <Sentence><ccue type="speculation_hypo_investigation _">m3 m4</ccue> A <ccue type="speculation_hypo_investigation _">m7 m8</ccue> B</Sentence>
+                        <Sentence>Certain sentence D E F</Sentence>
+                    </Document>
+                </DocumentSet>
+            </Annotation>'''
+        )
+        test_output_file = io.StringIO()
+        ds = hedge_dataset.HedgeDataset(element)
+        ds.convert_to_sequence_classification_tsv(test_output_file)
+
+        result_txt = test_output_file.getvalue().strip()
+        expected_result = (
+            'Uncertain sentence m1 m2 B C\t1\r\n'
+            'Certain sentence A B C\t0\r\n'
+            'm3 m4 A m7 m8 B\t1\r\n'
+            'Certain sentence D E F\t0\r\n'
+        ).rstrip()
+
+        self.assertEqual(result_txt, expected_result)
+
 
 if __name__ == '__main__':
     unittest.main()

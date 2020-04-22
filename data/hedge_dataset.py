@@ -93,11 +93,30 @@ class HedgeDataset(object):
                 # Sentence end, print empty line
                 print(file=out_file_obj)
 
-    def convert_to_multiple_ner_files(self, out_file_pattern):
+    def convert_to_multiple(self, out_file_pattern, function):
         documents_iterator = list(self.root.iterdescendants('Document'))
         for i, document in enumerate(tqdm.tqdm(documents_iterator, desc='Converting documents'), 1):
             with open(out_file_pattern.format(i), 'w', encoding='utf-8') as out_file_i:
-                self.convert_to_ner_txt(out_file_i, documents_iterator=[document], use_tqdm=False)
+                function(out_file_i, documents_iterator=[document], use_tqdm=False)
+
+    def convert_to_multiple_ner_files(self, out_file_pattern):
+        self.convert_to_multiple(out_file_pattern, self.convert_to_ner_txt)
+
+    def convert_to_sequence_classification_tsv(self, out_file_obj, documents_iterator=None, use_tqdm=True):
+        if documents_iterator is None:
+            documents_iterator = list(self.root.iterdescendants('Document'))
+        if use_tqdm:
+            documents_iterator = tqdm.tqdm(documents_iterator, desc='Converting documents')
+        tsv_writer = csv.writer(out_file_obj, delimiter='\t')
+        for document in documents_iterator:
+            all_sentences_iter = document.iterdescendants('Sentence')
+            for sentence_i, sentence in enumerate(all_sentences_iter):
+                is_uncertain = int(sentence.find('ccue') is not None)
+                full_text = ''.join(sentence.itertext())
+                tsv_writer.writerow([full_text, is_uncertain])
+
+    def convert_to_multiple_classification_tsv_files(self, out_file_pattern):
+        self.convert_to_multiple(out_file_pattern, self.convert_to_sequence_classification_tsv)
 
     @classmethod
     def from_xml_file(cls, source):
