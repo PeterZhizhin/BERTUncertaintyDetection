@@ -11,8 +11,8 @@ BASE_OUTPUT_CLASSIFICATION_DIR="classification_experiment"
 BASE_OUTPUT_NER_DIR="ner_experiments"
 
 # Total number of models: 2 * 3 * 4 * 20 = 480
-# declare -a used_programs=("./run_ner_parametrized.sh" "./run_classification_parametrized.sh")
-declare -a used_programs=("echo" "echo")
+declare -a used_programs=("./run_ner_parametrized.sh" "./run_classification_parametrized.sh")
+# declare -a used_programs=("echo" "echo")
 declare -a tasks_data_dir=("$BASE_DATA_NER_DIR" "$BASE_DATA_CLASSIFICATION_DIR")
 declare -a tasks_output_dir=("$BASE_OUTPUT_NER_DIR" "$BASE_OUTPUT_CLASSIFICATION_DIR")
 
