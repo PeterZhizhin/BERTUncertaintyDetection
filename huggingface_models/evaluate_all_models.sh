@@ -59,4 +59,4 @@ current_task_arguments=${all_arguments_list[${SLURM_ARRAY_TASK_ID}]}
 current_used_program=${used_programs_list[${SLURM_ARRAY_TASK_ID}]}
 echo "Current task ID: $SLURM_ARRAY_TASK_ID"
 echo "Executing arguments: $current_used_program $current_task_arguments"
-$current_used_program "$current_task_arguments"
+$current_used_program $current_task_arguments
