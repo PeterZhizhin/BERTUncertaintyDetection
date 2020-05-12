@@ -3,7 +3,7 @@
 #SBATCH --error=model_eval.%A_%a.error
 #SBATCH --output=model_eval.%A_%a.out
 #SBATCH --time="00:10:00"
-#SBATCH --array=0-719
+#SBATCH --array=0-959
 
 DO_GENERATE_SYMLINKS=$1
 
@@ -13,7 +13,7 @@ BASE_DATA_CLASSIFICATION_DIR=../uncertainty_dataset/output_datasets/result/class
 BASE_OUTPUT_CLASSIFICATION_DIR="classification_experiment"
 BASE_OUTPUT_NER_DIR="ner_experiments"
 
-# Total number of models: 2 * 3 * 6 * 20 = 720
+# Total number of models: 2 * 3 * 8 * 20 = 960
 declare -a used_programs=("./run_ner_parametrized.sh" "./run_classification_parametrized.sh")
 # declare -a used_programs=("echo" "echo")
 declare -a tasks_data_dir=("$BASE_DATA_NER_DIR" "$BASE_DATA_CLASSIFICATION_DIR")
@@ -21,8 +21,8 @@ declare -a tasks_output_dir=("$BASE_OUTPUT_NER_DIR" "$BASE_OUTPUT_CLASSIFICATION
 
 declare -a base_model_paths=("bert_base_cased" "scibert_scivocab_cased" "biobert_base")
 
-declare -a model_types=("wiki" "bio" "wiki_to_bio" "bio_to_wiki" "wiki" "bio")
-declare -a used_datasets=("wiki" "bio" "bio" "wiki" "factbank" "factbank")
+declare -a model_types=("wiki" "bio" "wiki_to_bio" "bio_to_wiki" "wiki" "bio" "wiki" "bio")
+declare -a used_datasets=("wiki" "bio" "bio" "wiki" "factbank" "factbank" "bio" "wiki")
 
 declare -a model_files=("config.json" "pytorch_model.bin" "special_tokens_map.json" "tokenizer_config.json" "training_args.bin" "vocab.txt")
 
