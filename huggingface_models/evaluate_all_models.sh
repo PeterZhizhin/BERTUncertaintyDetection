@@ -5,6 +5,8 @@
 #SBATCH --time="00:10:00"
 #SBATCH --array=0-719
 
+DO_GENERATE_SYMLINKS=$1
+
 BASE_DATA_NER_DIR=../uncertainty_dataset/output_datasets/result
 BASE_DATA_CLASSIFICATION_DIR=../uncertainty_dataset/output_datasets/result/classification
 
@@ -47,13 +49,17 @@ do
       for seed in $(seq $seeds_start $seeds_end)
       do
         full_model_dir="$BASE_OUTPUT_DIR/${base_model_path}_${model_type}_${seed}"
-        full_output_dir="$BASE_OUTPUT_DIR/${base_model_path}_result_${model_type}_at_${evaluated_dataset}"
+        full_output_dir="$BASE_OUTPUT_DIR/results/${base_model_path}_${model_type}_at_${evaluated_dataset}_${seed}"
 
-        mkdir -p $full_output_dir
-        for model_file in "${model_files[@]}"
-        do
-          ln -sT "$full_model_dir/$model_file" "$full_output_dir/$model_file"
-        done
+	if [ ! -z $DO_GENERATE_SYMLINKS ];
+	then
+          echo "Generating a symlink"
+          mkdir -p $full_output_dir
+          for model_file in "${model_files[@]}"
+          do
+            ln -sf $(realpath "$full_model_dir/$model_file") "$full_output_dir/$model_file"
+          done
+	fi
 
         full_data_dir="$BASE_DATA_DIR/$evaluated_dataset"
         full_argument_list="$full_model_dir $full_output_dir $full_data_dir $seed --no_train"
