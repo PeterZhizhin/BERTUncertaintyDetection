@@ -43,4 +43,4 @@ python3 run_classification.py --data_dir $DATA_DIR \
     --seed $SEED \
     --cache_dir transformers_cache \
     --do_predict \
-    $(MAYBE_DO_TRAIN)
+    "$(MAYBE_DO_TRAIN)"
