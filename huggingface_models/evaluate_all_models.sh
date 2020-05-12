@@ -49,6 +49,7 @@ do
         full_model_dir="$BASE_OUTPUT_DIR/${base_model_path}_${model_type}_${seed}"
         full_output_dir="$BASE_OUTPUT_DIR/${base_model_path}_result_${model_type}_at_${evaluated_dataset}"
 
+        mkdir -p $full_output_dir
         for model_file in "${model_files[@]}"
         do
           ln -sT "$full_model_dir/$model_file" "$full_output_dir/$model_file"
