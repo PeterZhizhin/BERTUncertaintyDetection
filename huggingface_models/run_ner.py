@@ -361,6 +361,7 @@ def load_and_cache_examples(args, tokenizer, labels, pad_token_label_id, mode):
             pad_token=tokenizer.pad_token_id,
             pad_token_segment_id=tokenizer.pad_token_type_id,
             pad_token_label_id=pad_token_label_id,
+            use_i_token_instead_of_pad_for_next_tokens=mode != 'test'
         )
         if args.local_rank in [-1, 0]:
             logger.info("Saving features into cached file %s", cached_features_file)
