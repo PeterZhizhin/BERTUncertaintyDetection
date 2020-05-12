@@ -2,7 +2,8 @@
 #SBATCH -n 1 -c 1 -G 1
 #SBATCH --error=model_eval.%A_%a.error
 #SBATCH --output=model_eval.%A_%a.out
-#SBATCH --array=0-479
+#SBATCH --time="00:10:00"
+#SBATCH --array=0-719
 
 BASE_DATA_NER_DIR=../uncertainty_dataset/output_datasets/result
 BASE_DATA_CLASSIFICATION_DIR=../uncertainty_dataset/output_datasets/result/classification
@@ -10,7 +11,7 @@ BASE_DATA_CLASSIFICATION_DIR=../uncertainty_dataset/output_datasets/result/class
 BASE_OUTPUT_CLASSIFICATION_DIR="classification_experiment"
 BASE_OUTPUT_NER_DIR="ner_experiments"
 
-# Total number of models: 2 * 3 * 4 * 20 = 480
+# Total number of models: 2 * 3 * 6 * 20 = 720
 declare -a used_programs=("./run_ner_parametrized.sh" "./run_classification_parametrized.sh")
 # declare -a used_programs=("echo" "echo")
 declare -a tasks_data_dir=("$BASE_DATA_NER_DIR" "$BASE_DATA_CLASSIFICATION_DIR")
@@ -18,8 +19,8 @@ declare -a tasks_output_dir=("$BASE_OUTPUT_NER_DIR" "$BASE_OUTPUT_CLASSIFICATION
 
 declare -a base_model_paths=("bert_base_cased" "scibert_scivocab_cased" "biobert_base")
 
-declare -a model_types=("wiki" "bio" "wiki_to_bio" "bio_to_wiki")
-declare -a used_datasets=("wiki" "bio" "bio" "wiki")
+declare -a model_types=("wiki" "bio" "wiki_to_bio" "bio_to_wiki" "wiki" "bio")
+declare -a used_datasets=("wiki" "bio" "bio" "wiki" "factbank" "factbank")
 
 seeds_start=1
 number_of_seeds=20
@@ -44,7 +45,7 @@ do
       for seed in $(seq $seeds_start $seeds_end)
       do
         full_model_dir="$BASE_OUTPUT_DIR/${base_model_path}_${model_type}_${seed}"
-        full_output_dir="$full_model_dir"
+        full_output_dir="$BASE_OUTPUT_DIR/${base_model_path}_result_${model_type}_at_${evaluated_dataset}"
         full_data_dir="$BASE_DATA_DIR/$evaluated_dataset"
         full_argument_list="$full_model_dir $full_output_dir $full_data_dir $seed --no_train"
 
