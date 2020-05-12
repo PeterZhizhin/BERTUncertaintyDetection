@@ -19,6 +19,11 @@ OUTPUT_DIR=$2
 DATA_DIR=$3
 SEED=$4
 
+MAYBE_DO_TRAIN="--do_train"
+if [ ! -z $5 ]
+then
+  MAYBE_DO_TRAIN=""
+fi
 
 mkdir -p classification_results
 export BATCH_SIZE=32
@@ -37,5 +42,5 @@ python3 run_classification.py --data_dir $DATA_DIR \
     --save_steps $SAVE_STEPS \
     --seed $SEED \
     --cache_dir transformers_cache \
-    --do_train \
-    --do_eval
+    --do_predict \
+    $(MAYBE_DO_TRAIN)
