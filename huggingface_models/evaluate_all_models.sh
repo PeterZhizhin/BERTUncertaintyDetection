@@ -22,6 +22,8 @@ declare -a base_model_paths=("bert_base_cased" "scibert_scivocab_cased" "biobert
 declare -a model_types=("wiki" "bio" "wiki_to_bio" "bio_to_wiki" "wiki" "bio")
 declare -a used_datasets=("wiki" "bio" "bio" "wiki" "factbank" "factbank")
 
+declare -a model_files=("config.json" "pytorch_model.bin" "special_tokens_map.json" "tokenizer_config.json" "training_args.bin" "vocab.txt")
+
 seeds_start=1
 number_of_seeds=20
 
@@ -46,6 +48,12 @@ do
       do
         full_model_dir="$BASE_OUTPUT_DIR/${base_model_path}_${model_type}_${seed}"
         full_output_dir="$BASE_OUTPUT_DIR/${base_model_path}_result_${model_type}_at_${evaluated_dataset}"
+
+        for model_file in "${model_files[@]}"
+        do
+          ln -sT "$full_model_dir/$model_file" "$full_output_dir/$model_file"
+        done
+
         full_data_dir="$BASE_DATA_DIR/$evaluated_dataset"
         full_argument_list="$full_model_dir $full_output_dir $full_data_dir $seed --no_train"
 
