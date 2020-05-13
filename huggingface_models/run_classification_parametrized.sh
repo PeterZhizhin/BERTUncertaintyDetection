@@ -42,5 +42,5 @@ python3 run_classification.py --data_dir $DATA_DIR \
     --save_steps $SAVE_STEPS \
     --seed $SEED \
     --cache_dir transformers_cache \
-    --do_predict \
+    --do_eval \
     $MAYBE_DO_TRAIN
