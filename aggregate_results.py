@@ -32,10 +32,13 @@ def main():
     parser.add_argument('--csv_output', type=str, default='aggregate_output.csv', help='File for CSV results.')
     parser.add_argument('--eval_all_script_format', action='store_true',
                         help='Whether to parse results in the evaluate_all_models.sh format.')
+    parser.add_argument('--override_output_file', default=None, type=str, help='Override model output file path.')
 
     args = parser.parse_args()
 
     model_output_file = 'test_results.txt' if args.eval_all_script_format else 'eval_results.txt'
+    if args.override_output_file:
+        model_output_file = args.override_output_file
 
     all_files = os.listdir(args.results_folder)
     target_re = FOLDER_RE_RESULTS if args.eval_all_script_format else FOLDER_RE
