@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uncertainty detection demo app</title>
+</head>
+
+<style>
+    #main_text {
+        width: 600px;
+        height: 300px;
+        font-size: 20px;
+    }
+
+    #submit_button {
+        width: 200px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    #output_text {
+        font-size: 20px;
+        font-family: monospace;
+    }
+
+    .B-COND, .I-COND {
+        background-color: green;
+    }
+    .B-DOX, .I-DOX {
+        background-color: blue;
+    }
+    .B-INV, .I-INV {
+        background-color: brown;
+    }
+    .B-EPIST , .I-EPIST {
+        background-color: red;
+    }
+
+    .sup_ner {
+        color: green;
+    }
+</style>
+<body>
+
+<h1>Uncertainty detection with BERT</h1>
+
+{% if examples_list is defined %}
+<h2>Examples:</h2>
+<ul>
+    {% for example in examples_list %}
+    <li><a href="/?example_id={{ loop.index }}">Example {{ loop.index }}: {{ example }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form action="/" id="submit_text_form" method="post">
+    <p><textarea id="main_text" placeholder="Place your text here" name="main_text">{{ main_text }}</textarea></p>
+    <p><input id="submit_button" type="submit" value="Send"></p>
+</form>
+
+{% if output_text is defined %}
+<h2>Output</h2>
+<div id="output_text">
+{% for paragraph in output_text %}
+    <p>
+    {% for typed_piece in paragraph %}
+        {% if typed_piece.class != '' %}
+            <mark class="{{typed_piece.class}}" title="{{typed_piece.class}}">{{ typed_piece.text }}</mark><sup class="sup_ner">{{ typed_piece.class }}</sup>
+        {% else %}
+            {{ typed_piece.text }}
+        {% endif %}
+    {% endfor %}
+    </p>
+{% endfor %}
+</div>
+{% endif %}
+
+</body>
+</html>
