@@ -2,16 +2,16 @@
 #SBATCH -n 1 -c 1 -G 1
 #SBATCH --error=ner_experiments.%A_%a.error
 #SBATCH --output=ner_experiments.%A_%a.out
-#SBATCH --array=0-119%10
+#SBATCH --array=0-39
 
 BASE_DATA_DIR=../uncertainty_dataset/output_datasets/result/classification
 BASE_OUTPUT_DIR="classification_experiment"
 
 mkdir -p $BASE_OUTPUT_DIR
 
-# 30 runs in total 3 * 2 * 20 = 120
-declare -a model_paths=("bert-base-cased" "allenai/scibert_scivocab_cased" "biobert_base")
-declare -a output_base_paths=("bert_base_cased" "scibert_scivocab_cased" "biobert_base")
+# 30 runs in total 1 * 2 * 20 = 40
+declare -a model_paths=("google/electra-small-discriminator" "bert-base-cased" "allenai/scibert_scivocab_cased" "biobert_base")
+declare -a output_base_paths=("electra_small_discriminator" "bert_base_cased" "scibert_scivocab_cased" "biobert_base")
 declare -a dataset_paths=("wiki" "bio")
 declare -a dataset_transfers=("bio" "wiki")
 seeds_start=1
