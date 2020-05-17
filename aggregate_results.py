@@ -36,7 +36,7 @@ def main():
 
     args = parser.parse_args()
 
-    model_output_file = 'test_results.txt' if args.eval_all_script_format else 'eval_results.txt'
+    model_output_file = 'eval_results.txt'
     if args.override_output_file:
         model_output_file = args.override_output_file
 
@@ -49,6 +49,8 @@ def main():
         if re_match is None:
             continue
         eval_results_path = os.path.join(args.results_folder, filename, model_output_file)
+        if not os.path.isfile(eval_results_path) and not args.override_output_file:
+            eval_results_path = os.path.join(args.results_folder, filename, 'test_results.txt')
         metrics = parse_eval_results_file(eval_results_path)
         if args.eval_all_script_format:
             model_name, dataset, evaluated_at, seed = re_match.groups()
