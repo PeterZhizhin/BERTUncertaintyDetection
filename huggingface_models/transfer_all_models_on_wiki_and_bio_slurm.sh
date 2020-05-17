@@ -7,9 +7,9 @@
 BASE_DATA_DIR=../uncertainty_dataset/output_datasets/result
 BASE_OUTPUT_DIR="ner_experiments"
 
-# 30 runs in total 1 * 2 * 20 = 40 (training only electra)
-declare -a model_paths=("google/electra-small-discriminator" "bert-base-cased" "allenai/scibert_scivocab_cased" "biobert_base")
-declare -a output_base_paths=("electra_small_discriminator" "bert_base_cased" "scibert_scivocab_cased" "biobert_base")
+# 30 runs in total 1 * 2 * 20 = 40 (training only bert large)
+declare -a model_paths=("bert-large-cased" "google/electra-small-discriminator" "bert-base-cased" "allenai/scibert_scivocab_cased" "biobert_base")
+declare -a output_base_paths=("bert_large_cased" "electra_small_discriminator" "bert_base_cased" "scibert_scivocab_cased" "biobert_base")
 declare -a dataset_paths=("wiki" "bio")
 declare -a dataset_transfers=("bio" "wiki")
 seeds_start=1
